@@ -1,0 +1,21 @@
+{
+    "name": "ncrypthic/doctrine-graphql-bundle",
+    "description": "Symfony bundle for ncrypthic/doctrine-graphql library",
+    "type": "library",
+    "require": {
+        "ncrypthic/doctrine-graphql": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "\\LLA\\DoctrineGraphQLBundle\\": "src"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lim Afriyadi",
+            "email": "lim.afriyadi.id@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}
