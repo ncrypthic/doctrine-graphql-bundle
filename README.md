@@ -1,6 +1,6 @@
 # Doctrine GraphQL Bundle
 
-This is a Symfony bundle for [ncrypthic/doctrine-grapqhl](https://packagist.org/packages/ncrypthic/doctrine-grapqhl) library
+This is a Symfony bundle for [ncrypthic/doctrine-graphql](https://packagist.org/packages/ncrypthic/doctrine-graphql) library
 
 ## Installation
 
