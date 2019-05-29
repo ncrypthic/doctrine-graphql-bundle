@@ -83,7 +83,8 @@ class GraphQL implements CacheWarmerInterface, CacheClearerInterface
      */
     public function clear($cacheDirectory)
     {
-        $this->cache->delete('lla.doctrine_graphql.config');
+        $cachedConfig = $this->cache->getItem('lla.doctrine_graphql.config');
+        $this->cache->deleteItem($cachedConfig);
     }
 }
 
