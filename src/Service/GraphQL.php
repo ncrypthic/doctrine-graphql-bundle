@@ -60,23 +60,23 @@ class GraphQL implements CacheWarmerInterface, CacheClearerInterface
      */
     private function getCachedServerConfig()
     {
-        $cachedSchema = $this->cache->getItem('lla.doctrine_graphql.config');
-        if(!$cachedSchema->isHit()) {
+        $cachedConfig = $this->cache->getItem('lla.doctrine_graphql.config');
+        if(!$cachedConfig->isHit()) {
             $schema = $this->schema
-                 ->buildTypes($this->entityManager)
+                ->buildTypes($this->entityManager)
                 ->buildQueries($this->entityManager)
                 ->buildMutations($this->entityManager)
                 ->toGraphQLSchema();
-            $cachedSchema->set(ServerConfig::create(['schema' => $schema]));
+            $cachedConfig->set(ServerConfig::create(['schema' => $schema]));
         }
-        return $cachedSchema->get();
+        return $cachedConfig->get();
     }
     /**
      * {@inheritdoc}
      */
     public function warmUp($cacheDirectory)
     {
-        $this->getServer();
+        $this->getCachedServerConfig();
     }
     /**
      * {@inheritdoc}
