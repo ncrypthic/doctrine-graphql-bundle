@@ -3,7 +3,7 @@
     "description": "Symfony bundle for ncrypthic/doctrine-graphql library",
     "type": "library",
     "require": {
-        "ncrypthic/doctrine-graphql": "^1.0"
+        "ncrypthic/doctrine-graphql": "~1.1"
     },
     "autoload": {
         "psr-4": {
