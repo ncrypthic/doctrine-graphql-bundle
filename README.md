@@ -40,5 +40,5 @@ lla_doctrine_graphql:
     graphql:
         path: /graphql
         method: POST
-        defaults: { _controller: LLADoctrineGraphQLBundle:GraphQL:graphql }
+        defaults: { _controller: LLADoctrineGraphQLBundle:DoctrineGraphQL:graphql }
 ```
