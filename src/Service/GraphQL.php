@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManager;
 use GraphQL\Server\Helper;
 use GraphQL\Server\ServerConfig;
 use LLA\DoctrineGraphQL\DoctrineGraphQL;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
@@ -13,23 +14,28 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 class GraphQL implements CacheWarmerInterface, CacheClearerInterface
 {
     /**
-     * @var Symfony\Component\Cache\Adapter\AdapterInterface
+     * @var \Symfony\Component\Cache\Adapter\AdapterInterface
      */
     private $cache;
     /**
-     * @var LLA\DoctrineGraphQL\DoctrineGraphQL
+     * @var \LLA\DoctrineGraphQL\DoctrineGraphQL
      */
     private $schema;
     /**
-     * @var Doctrine\ORM\EntityManager
+     * @var \Doctrine\ORM\EntityManager
      */
     private $entityManager;
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
 
-    public function __construct(AdapterInterface $cache, EntityManager $entityManager)
+    public function __construct(AdapterInterface $cache, EntityManager $entityManager, LoggerInterface $logger)
     {
         $this->cache = $cache;
         $this->entityManager = $entityManager;
-        $this->schema = new DoctrineGraphQL();
+        $this->schema = new DoctrineGraphQL($logger);
+        $this->logger = $logger;
     }
     /**
      * {@inheritdoc}
@@ -40,7 +46,7 @@ class GraphQL implements CacheWarmerInterface, CacheClearerInterface
     }
     /**
      * @param Request $req
-     * @return GraphQL\Executor\ExecutionResult
+     * @return \GraphQL\Executor\ExecutionResult
      */
     public function handleRequest(Request $req)
     {
@@ -56,7 +62,7 @@ class GraphQL implements CacheWarmerInterface, CacheClearerInterface
     /**
      * Get GraphQL server config
      *
-     * @return GraphQL\Server\ServerConfig
+     * @return \GraphQL\Server\ServerConfig
      */
     private function getCachedServerConfig()
     {
