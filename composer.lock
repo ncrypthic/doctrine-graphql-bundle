@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ba9a49fa23ab7cd92990da1974b61a3",
+    "content-hash": "528e3ae5ba70c5c3288cbbdefea81c20",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -874,16 +874,16 @@
         },
         {
             "name": "ncrypthic/doctrine-graphql",
-            "version": "v1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ncrypthic/doctrine-graphql.git",
-                "reference": "d01a38da08f389341c7795c543781d7b757c1186"
+                "reference": "2acd2087ddbc063c6383f416be8f22fe432efe58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ncrypthic/doctrine-graphql/zipball/d01a38da08f389341c7795c543781d7b757c1186",
-                "reference": "d01a38da08f389341c7795c543781d7b757c1186",
+                "url": "https://api.github.com/repos/ncrypthic/doctrine-graphql/zipball/2acd2087ddbc063c6383f416be8f22fe432efe58",
+                "reference": "2acd2087ddbc063c6383f416be8f22fe432efe58",
                 "shasum": ""
             },
             "require": {
@@ -912,7 +912,7 @@
                 }
             ],
             "description": "Doctrine to GraphQL adapter",
-            "time": "2019-05-26T17:05:04+00:00"
+            "time": "2019-06-06T07:24:31+00:00"
         },
         {
             "name": "symfony/console",
