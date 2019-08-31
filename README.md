@@ -32,6 +32,7 @@ composer require ncrypthic/doctrine-graphql-bundle
 lla_doctrine_graphql:
     cache_service: cache.app # default
     entity_manager_service: doctrine.orm.default_entity_manager
+    debug: false # GraphQL error debugging, default: false
 ```
 
 3. Add graphql route
