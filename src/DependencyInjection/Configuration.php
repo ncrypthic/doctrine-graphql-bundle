@@ -22,6 +22,8 @@ class Configuration implements ConfigurationInterface
         $rootNode->children()
             ->scalarNode('entity_manager_service')->isRequired()->end()
             ->scalarNode('cache_service')->defaultValue('cache.app')->end()
+            ->scalarNode('logger_service')->defaultValue('logger')->end()
+            ->booleanNode('debug')->defaultValue(false)->end()
         ->end();
 
         // Here you should define the parameters that are allowed to
