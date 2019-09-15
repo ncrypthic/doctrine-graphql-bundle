@@ -11,6 +11,7 @@
         <service id="lla.doctrine_graphql.service.graphql" class="%lla.doctrine_graphql.service.graphql.class%">
             <argument type="expression">service(parameter('lla.doctrine_graphql.cache_service'))</argument>
             <argument type="expression">service(parameter('lla.doctrine_graphql.entity_manager_service'))</argument>
+            <argument type="expression">service(parameter('lla.doctrine_graphql.logger_service'))</argument>
             <argument type="service" id="logger" />
             <tag name="kernel.cache_warmer" />
             <tag name="kernel.cache_clearer" />
