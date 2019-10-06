@@ -2,15 +2,16 @@
 
 namespace LLA\DoctrineGraphQLBundle\Controller;
 
-use GraphQL\Server\Helper;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use LLA\DoctrineGraphQLBundle\Service\GraphQL;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class DoctrineGraphQLController extends Controller
+class DoctrineGraphQLController extends AbstractController
 {
     public function graphqlAction(Request $req)
     {
-        return new JsonResponse($this->get('lla.doctrine_graphql.service.graphql')->handleRequest($req));
+        $graphql = $this->container->get('lla_doctrine_graphql.service.graphql');
+        return new JsonResponse($graphql->handleRequest($req));
     }
 }
