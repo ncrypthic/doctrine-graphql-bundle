@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DoctrineGraphQLController extends Controller
 {
-    public function graphqlAction(request $req)
+    public function graphqlAction(Request $req)
     {
         return new JsonResponse($this->get('lla.doctrine_graphql.service.graphql')->handleRequest($req));
     }
