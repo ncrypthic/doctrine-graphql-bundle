@@ -2,16 +2,24 @@
 
 namespace LLA\DoctrineGraphQLBundle\Controller;
 
-use LLA\DoctrineGraphQLBundle\Service\GraphQL;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-class DoctrineGraphQLController extends AbstractController
+class DoctrineGraphQLController extends Controller
 {
-    public function graphqlAction(Request $req)
+    public function graphqlAction(request $req)
     {
-        $graphql = $this->container->get('lla_doctrine_graphql.service.graphql');
-        return new JsonResponse($graphql->handleRequest($req));
+        return new JsonResponse($this->get('lla.doctrine_graphql.service.graphql')->handleRequest($req));
+    }
+
+    public function corsAction(Request $req)
+    {
+        return new Response(null, 200, [
+            'access-control-allow-origin' => $req->headers->get('Origin', '') ?? '',
+            'access-control-allow-method' => 'GET,POST',
+            'access-control-allow-header' => 'Authorization,Content-Type,Accept'
+        ]);
     }
 }

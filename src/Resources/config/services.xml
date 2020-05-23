@@ -4,17 +4,22 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
-        <parameter key="lla_doctrine_graphql.service.graphql.class">LLA\DoctrineGraphQLBundle\Service\GraphQL</parameter>
-        <parameter key="lla_doctrine_graphql.controller.graphql.class">LLA\DoctrineGraphQLBundle\Controller\DoctrineGraphQLController</parameter>
+        <parameter key="lla.doctrine_graphql.service.graphql.class">LLA\DoctrineGraphQLBundle\Service\GraphQL</parameter>
+        <parameter key="lla.doctrine_graphql.service.graphql_registry.class">LLA\DoctrineGraphQL\Type\Registry</parameter>
     </parameters>
 
     <services>
-        <service id="lla_doctrine_graphql.controller" class="%lla_doctrine_graphql.controller.graphql.class%" public="true"/>
-        <service id="lla_doctrine_graphql.service.graphql" class="%lla_doctrine_graphql.service.graphql.class%" public="true">
-            <argument type="service" id="lla.doctrine_graphql.cache_service" />
-            <argument type="service" id="lla.doctrine_graphql.entity_manager_service" />
-            <argument type="service" id="lla.doctrine_graphql.logger_service" />
-            <argument>%lla.doctrine_graphql.debug%</argument>
+        <service id="lla.doctrine_graphql.service.graphql_registry"
+            class="%lla.doctrine_graphql.service.graphql_registry.class%" public="true"/>
+        <service id="lla.doctrine_graphql.service.graphql" class="%lla.doctrine_graphql.service.graphql.class%">
+            <argument type="service" id="lla.doctrine_graphql.service.graphql_registry"/>
+            <argument type="expression">service(parameter('lla.doctrine_graphql.cache_service'))</argument>
+            <argument type="expression">service(parameter('lla.doctrine_graphql.entity_manager_service'))</argument>
+            <argument type="expression">service(parameter('lla.doctrine_graphql.logger_service'))</argument>
+            <argument type="service" id="event_dispatcher"/>
+            <argument type="service" id="logger" />
+            <tag name="kernel.cache_warmer" />
+            <tag name="kernel.cache_clearer" />
         </service>
     </services>
 </container>
