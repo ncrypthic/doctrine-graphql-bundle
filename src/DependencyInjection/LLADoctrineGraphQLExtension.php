@@ -25,6 +25,7 @@ class LLADoctrineGraphQLExtension extends Extension
         $container->setParameter('lla.doctrine_graphql.cache_service', $config['cache_service']);
         $container->setParameter('lla.doctrine_graphql.entity_manager_service', $config['entity_manager_service']);
         $container->setParameter('lla.doctrine_graphql.logger_service', $config['logger_service']);
+        $container->setParameter('lla.doctrine_graphql.debug', $config['debug']);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');

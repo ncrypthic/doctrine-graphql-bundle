@@ -6,6 +6,8 @@ use GraphQL\Error\Debug;
 use GraphQL\Server\Helper;
 use GraphQL\Server\ServerConfig;
 use LLA\DoctrineGraphQL\DoctrineGraphQL;
+use LLA\DoctrineGraphQL\Mutation\MutationListenerInterface;
+use LLA\DoctrineGraphQL\Query\QueryListenerInterface;
 use LLA\DoctrineGraphQL\Type\RegistryInterface;
 use LLA\DoctrineGraphQLBundle\Event\SchemaGenerationEvent;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -27,6 +29,10 @@ class GraphQL implements CacheWarmerInterface, CacheClearerInterface
      * @var \LLA\DoctrineGraphQL\DoctrineGraphQL
      */
     private $schema;
+    /**
+     * @var \GraphQL\Server\ServerConfig
+     */
+    private $serverConfig;
     /**
      * @var \Doctrine\ORM\EntityManager
      */
@@ -53,8 +59,14 @@ class GraphQL implements CacheWarmerInterface, CacheClearerInterface
     private $debug;
 
     public function __construct(
-        RegistryInterface $registry, AdapterInterface $cache, EntityManager $entityManager,
-        LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, $debug = false)
+        RegistryInterface $registry,
+        AdapterInterface $cache,
+        EntityManager $entityManager,
+        LoggerInterface $logger,
+        EventDispatcherInterface $eventDispatcher,
+        MutationListenerInterface $mutationListener = null,
+        QueryListenerInterface $queryListener = null,
+        bool $debug = false)
     {
         $this->registry = $registry;
         $this->cache = $cache;
@@ -62,7 +74,7 @@ class GraphQL implements CacheWarmerInterface, CacheClearerInterface
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
         $this->debug = $debug;
-        $this->schema = new DoctrineGraphQL($registry, $this->entityManager, null);
+        $this->schema = new DoctrineGraphQL($registry, $this->entityManager, $mutationListener, $queryListener, null);
         $psr17Factory = new Psr17Factory();
         $this->psrFactory = new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
     }
@@ -83,35 +95,37 @@ class GraphQL implements CacheWarmerInterface, CacheClearerInterface
         $psrRequest = $this->psrFactory->createRequest($req);
         $operations = $helper->parsePsrRequest($psrRequest);
         $this->logger->debug('Handling GraphQL operations', ['operations' => $operations]);
-        $config = $this->getCachedServerConfig();
-        return is_array($operations)
+        $config = $this->makeServerConfig();
+        $res = is_array($operations)
             ? $helper->executeBatch($config, $operations)
             : $helper->executeOperation($config, $operations);
+
+        return $res;
     }
     /**
      * Get GraphQL server config
      *
      * @return \GraphQL\Server\ServerConfig
      */
-    private function getCachedServerConfig()
+    private function makeServerConfig()
     {
-        $cachedConfig = $this->cache->getItem('lla.doctrine_graphql.config');
-        if(!$cachedConfig->isHit()) {
-            $this->logger->debug('no cached config, building new schema');
-            $this->schema
-                ->buildTypes($this->entityManager)
-                ->buildQueries($this->entityManager)
-                ->buildMutations($this->entityManager);
-            $this->eventDispatcher->dispatch('lla.doctrine_graphql.event.schema_generation', new SchemaGenerationEvent($this->registry));
-            $schema = $this->schema->toGraphqlSchema();
-            $config = ServerConfig::create([
-                'schema' => $schema,
-                'debug' => $this->debug ? Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE : false,
-            ]);
-            $cachedConfig->set($config);
-            $this->logger->debug('Caching schema configuration', [ 'result' => $this->cache->save($cachedConfig) ]);
+        if(!empty($this->serverConfig)) {
+            return $this->serverConfig;
         }
-        return $cachedConfig->get();
+        $this->logger->debug('schema not initialized');
+        $this->schema
+            ->buildTypes($this->entityManager)
+            ->buildQueries($this->entityManager)
+            ->buildMutations($this->entityManager);
+        // Hook for custom schema
+        $this->eventDispatcher->dispatch('lla.doctrine_graphql.event.schema_generation', new SchemaGenerationEvent($this->registry));
+        $schema = $this->schema->toGraphqlSchema();
+        $this->serverConfig = ServerConfig::create([
+            'schema' => $schema,
+            'debug' => $this->debug ? Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE : false,
+        ]);
+
+        return $this->serverConfig;
     }
     /**
      * {@inheritdoc}
@@ -119,7 +133,7 @@ class GraphQL implements CacheWarmerInterface, CacheClearerInterface
     public function warmUp($cacheDirectory)
     {
         $this->logger->debug('Warming up cache');
-        $this->getCachedServerConfig();
+        $this->makeServerConfig();
     }
     /**
      * {@inheritdoc}
